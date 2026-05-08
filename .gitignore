@@ -1,0 +1,10 @@
+.vs/
+./SimpleParser
+x64/
+*.vcxproj
+*.vcxproj.*
+*.sln
+*.o
+*.d
+*.exe
+.git/
