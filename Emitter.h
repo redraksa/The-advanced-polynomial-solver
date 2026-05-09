@@ -24,179 +24,24 @@ public:
 		symbolicTable.push_back({ "t", MixedFraction(tpolynom)});
 	}
 
-	void trasmittion(std::queue<Lexem>& queueLexem, std::stack<MixedFraction>& polynomials) {
-		
-		Lexem curLexem;
-			while (!queueLexem.empty()) {
-				curLexem = queueLexem.front();
-				queueLexem.pop();
+	void trasmittion(std::queue<Lexem>& queueLexem, std::stack<MixedFraction>& polynomials);
 
-				switch (curLexem.token)
-				{
-				case ID:
-				{
-					auto it = std::find_if(symbolicTable.cbegin(), symbolicTable.cend(),
-						[&](const Symbol& s) {return s.name == curLexem.value; });
-					if (it != symbolicTable.cend()) {
-						polynomials.push({ it->value });
-					}
-					else {
-						Monomial m(static_cast<const int>(symbolicTable.size()));
-						Polynom p(m, 1);
-						MixedFraction mx(p);
-						symbolicTable.push_back({ curLexem.value, mx });
-						polynomials.push({ mx });
-					}
-					break;
-				}
-				case NUM:
-				{
-					long long number = std::stoll(curLexem.value);
-					polynomials.push(MixedFraction(Polynom(Rational(number))));
-					break;
-				}
-				case PLUS:
-					addition(polynomials);
-					break;
-				case MINUS:
-					substraction(polynomials);
-					break;
-				case MUL:
-					multiplication(polynomials);
-					break;
-				case DIV:
-					division(polynomials);
-					break;
-				case POWER:
-					power(polynomials);
-					break;
-				default:
-					break;
-				}
-			}
+	std::vector<Symbol> getResult() const;
 
-			if (!polynomials.empty()) {
-				polynomials.top().normilize();
-			}
-	}
-
-	std::vector<Symbol> getResult() const {
-		if (symbolicTable.size() >= 1) {
-			return std::vector<Symbol>(symbolicTable.cbegin() + 1, symbolicTable.cend());
-		}
-		return {};
-	}
-
-	void launch() {
-		try {
-			while (!queuesLexem.empty()) {
-				std::pair<std::string, std::queue<Lexem>> line;
-				line = queuesLexem.front();
-				queuesLexem.pop();
-
-				std::stack<MixedFraction> polynomials;
-				std::queue<Lexem> queueLexem = line.second;
-
-				trasmittion(queueLexem, polynomials);
-
-				MixedFraction result;
-				if (!polynomials.empty()) {
-					result = polynomials.top();
-					polynomials.pop();
-				}
-
-				auto it = std::find_if(symbolicTable.begin(), symbolicTable.end(),
-					[&](const Symbol& s) {return s.name == line.first; });
-				if (it == symbolicTable.cend()) {
-					symbolicTable.push_back({ line.first, result });
-				}
-				else {
-					it->value = result;
-				}
-				
-			}
-		}
-		catch (const std::overflow_error& e) {
-			throw std::overflow_error(std::string("Overflow Error in Emitter: ") + e.what());
-		}
-		catch (const std::exception& e)
-		{
-			throw std::runtime_error(std::string("Runtime Error in Emitter: ") + e.what());
-		}
-		catch (...) {
-			throw std::runtime_error("Undefined Error in Emitter: ");
-		}
-
-	}
+	void launch();
 
 private:
 	std::queue<std::pair<std::string, std::queue<Lexem>>> queuesLexem;
 	std::vector<Symbol> symbolicTable;
 
-	void addition(std::stack<MixedFraction>& polynomials) {
-		MixedFraction firstPolinom = polynomials.top();
-		polynomials.pop();
+	void addition(std::stack<MixedFraction>& polynomials);
 
-		polynomials.top() += firstPolinom;
-	}
+	void substraction(std::stack<MixedFraction>& polynomials);
 
-	void substraction(std::stack<MixedFraction>& polynomials) {
-		MixedFraction firstPolinom = polynomials.top();
-		polynomials.pop();
+	void multiplication(std::stack<MixedFraction>& polynomials);
 
-		polynomials.top() -= firstPolinom;
-	}
+	void division(std::stack<MixedFraction>& polynomials);
 
-	void multiplication(std::stack<MixedFraction>& polynomials) {
-		MixedFraction firstPolinom = polynomials.top();
-		polynomials.pop();
-
-		polynomials.top() *= firstPolinom;
-		
-	}
-
-	void division(std::stack<MixedFraction>& polynomials) {
-		MixedFraction firstPolinom = polynomials.top();
-		polynomials.pop();
-
-		if (!firstPolinom.isZero()) {
-			polynomials.top() /= firstPolinom;
-		}
-		else {
-			throw std::runtime_error("zero division");
-		}
-		
-
-	}
-
-	void power(std::stack<MixedFraction>& polynomials) {
-		MixedFraction firstFraction = polynomials.top();
-		polynomials.pop();
-
-		if (firstFraction.isInteger()) {
-			long long power = firstFraction.getFreeMember();
-			if (power > 0) {
-				MixedFraction multi = polynomials.top();
-				for (long long i = 1; i < power; ++i) {
-					polynomials.top() *= multi;
-				}
-			}
-			else if (power < 0) {
-				MixedFraction divider = polynomials.top();
-				polynomials.pop();
-				polynomials.push({ { 1 } });
-				for (long long i = 0; i > power; --i) {
-					polynomials.top() /= divider;
-				}
-			}
-			else {
-				polynomials.pop();
-				polynomials.push({ {1} });
-			}
-		}
-		else {
-			throw std::runtime_error("Non-integer power");
-		}
-	}
+	void power(std::stack<MixedFraction>& polynomials);
 };
 

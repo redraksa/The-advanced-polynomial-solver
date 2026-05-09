@@ -28,6 +28,6 @@ namespace parameters {
 		}
 	};
 
-	inline std::vector<std::string> VARS = { "", "x", "y", "z" };
+	inline std::vector<std::string> VARS = { "t", "x", "y", "z" };
 
 }
