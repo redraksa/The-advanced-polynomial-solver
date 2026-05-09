@@ -2,7 +2,6 @@
 #include <iostream>
 #include <map>
 #include <numeric>
-//#include "Rational.h"
 #include "Polynom.h"
 #include "parametres.h"
 
@@ -13,155 +12,41 @@ private:
 	Polynom numerator;
 	Polynom denumerator;
 
-	void reduceFraction() {
-		try {
-			auto divider = Polynom::GCD(numerator, denumerator);
-			if (divider.has_value()) {
-				numerator /= divider.value();
-				denumerator /= divider.value();
-			}
-		}
-		catch (const std::overflow_error&) {
-			return;
-		}
-	}
+	void reduceFraction();
 
 public:
 	Fraction(Polynom numenatorPolynom) : numerator(std::move(numenatorPolynom)), denumerator(Polynom(Rational(1))) {}
 
-	/*	void setNumenator(Polynom polynom) {
-		numerator = std::move(polynom);
-	}
+	bool isZeroFraction() const;
 
-	void setDenumenator(Polynom polynom) {
-		denumerator = std::move(polynom);
-	}*/
+	Fraction& operator+=(const Fraction& other);
 
-	bool isZeroFraction() const {
-		return numerator.isZeroPolynom();
-	}
+	friend Fraction operator+(Fraction first, const Fraction& second);
 
-	Fraction& operator+=(const Fraction& other) {
-		Polynom otherNumerator = other.numerator;
-		if (denumerator != other.denumerator) {
-			otherNumerator = other.numerator * denumerator;
-			numerator = numerator * other.denumerator;
-			denumerator = other.denumerator * denumerator;
-		}
+	Fraction& operator-=(const Fraction& other);
 
-		numerator = numerator + otherNumerator;
-
-		if (isFraction()) {
-			reduceFraction();
-		}
-
-		return *this;
-	}
-
-	friend Fraction operator+(Fraction first, const Fraction& second) {
-		first += second;
-		return first;
-	}
-
-	Fraction& operator-=(const Fraction& other) {
-		Polynom otherNumerator = other.numerator;
-		if (denumerator != other.denumerator) {
-			otherNumerator = other.numerator * denumerator;
-			numerator = numerator * other.denumerator;
-			denumerator = other.denumerator * denumerator;
-		}
-
-		numerator = numerator - otherNumerator;
-
-		if (isFraction()) {
-			reduceFraction();
-		}
-
-		return *this;
-	}
-
-	friend Fraction operator-(Fraction first, const Fraction& second) {
-		first -= second;
-		return first;
-	}
+	friend Fraction operator-(Fraction first, const Fraction& second);
 	
-	Fraction& operator*=(const Fraction& other) {
-		numerator *= other.numerator;
-		denumerator *= other.denumerator;
+	Fraction& operator*=(const Fraction& other);
 
-		if (isFraction()) {
-			reduceFraction();
-		}
+	friend Fraction operator*(Fraction first, const Fraction& second);
 
-		return *this;
-	}
+	Fraction& operator/=(const Fraction& other);
 
-	friend Fraction operator*(Fraction first, const Fraction& second) {
-		first *= second;
-		return first;
-	}
+	friend Fraction operator/(Fraction first, const Fraction& second);
 
-	Fraction& operator/=(const Fraction& other) {
-		numerator *= other.denumerator;
-		denumerator *= other.numerator;
+	Polynom getMixedFraction(RETURNTYPEDIVIDEPOLYNOMS returnType);
 
-		if (isFraction()) {
-			reduceFraction();
-		}
+	bool isRational() const;
 
-		return *this;
-	}
+	void normilizeFraction();
 
-	friend Fraction operator/(Fraction first, const Fraction& second) {
-		first /= second;
-		return first;
-	}
+	bool isFraction() const;
 
-	Polynom getMixedFraction(RETURNTYPEDIVIDEPOLYNOMS returnType) {
-		if (returnType == QUOTIENT) {
-			return numerator / denumerator;
-		}
-		else {
-			return numerator % denumerator;
-		}
-	}
+	Polynom getNumerator() const;
 
-	bool isRational() {
-		return numerator.isFreePolynom() && !isFraction();
-	}
+	Polynom getDenumenator() const;
 
-	void normilizeFraction() {
-		Polynom p(denumerator.getLMC());
-		numerator /= p;
-		denumerator /= p;
-	}
-
-	/*	Rational getFreeMember() {
-		if (numerator.find(0) != numerator.cend()) {
-			return numerator[0];
-		}
-		else {
-			return Rational(0, 1);
-		}
-	}*/
-
-
-	bool isFraction() {
-		return !denumerator.isFreePolynom();
-	}
-
-	/*	void eraseFraction() {
-		numerator[0] = 0;
-		denumerator[0] = 1;
-	}*/
-
-
-	Polynom getNumerator() const {
-		return numerator;
-	}
-
-	Polynom getDenumenator() const {
-		return denumerator;
-	}
+	friend std::ostream& operator<<(std::ostream& os, const Fraction& fraction);
 };
 

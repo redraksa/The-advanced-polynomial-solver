@@ -6,7 +6,7 @@ CXXFLAGS = -Wall -std=c++17 -MMD -MP
 BISON = bison
 FLEX = flex
 
-SRPC = SimpleParser.cpp lex.yy.cpp parser.tab.cpp Emitter.cpp ResultPrinter.cpp MixedFraction.cpp Fraction.cpp Rational.cpp
+SRPC = SimpleParser.cpp lex.yy.cpp parser.tab.cpp Emitter.cpp ResultPrinter.cpp MixedFraction.cpp Fraction.cpp Rational.cpp Polynom.cpp Monomial.cpp
 OBJS = $(SRPC:.cpp=.o)
 DEPS = $(OBJS:.o=.d)
 
