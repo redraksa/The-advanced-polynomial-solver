@@ -21,7 +21,7 @@ class Emitter
 public:
 	Emitter(std::queue<std::pair<std::string, std::queue<Lexem>>> queuesLexem) : queuesLexem(std::move(queuesLexem)) {
 		Polynom tpolynom(Monomial(0), Rational(1));
-		symbolicTable.push_back({ "t", MixedFraction(tpolynom)});
+		symbolicTable.push_back({ "_t", MixedFraction(tpolynom)});
 	}
 
 	void trasmittion(std::queue<Lexem>& queueLexem, std::stack<MixedFraction>& polynomials);
