@@ -18,7 +18,7 @@ class Emitter
 public:
 	Emitter() {
 		Polynom tpolynom(Monomial(0), Rational(1));
-		symbolicTable.push_back({ "t", MixedFraction(tpolynom) });
+		symbolicTable.push_back({ "_t", MixedFraction(tpolynom) });
 	}
 
 	std::vector<Symbol> getResult() const;
