@@ -54,35 +54,6 @@ long long Rational::saveMul(const long long first, const long long second) {
 	return result;
 }
 
-
-long long Rational::savePow(long long base, long long exp) {
-	if (exp < 0) throw std::domain_error("Only natural exponents are supported");
-	if (exp == 0) return 1;
-	if (base == 0) return 0;
-	if (base == 1) return 1;
-	if (base == -1) return (exp % 2 == 0) ? 1 : -1;
-
-	long long orig_base = base;
-	long long orig_exp = exp;
-	long long res = 1;
-
-	try {
-		while (exp > 0) {
-			if (exp % 2 == 1) {
-				res = saveMul(res, base);
-			}
-			if (exp > 1) {
-				base = saveMul(base, base);
-			}
-			exp /= 2;
-		}
-	}
-	catch (const std::overflow_error&) {
-		throw std::overflow_error("Exponentiation overflow: " + std::to_string(orig_base) + "^" + std::to_string(orig_exp));
-	}
-	return res;
-}
-
 Rational& Rational::operator+=(const Rational& other) {
 	long long GCDDenumenator = std::gcd(denumenator, other.denumenator);
 	long long LCMDenumeantor = saveMul(saveDiv(denumenator, GCDDenumenator), other.denumenator);

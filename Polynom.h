@@ -30,6 +30,10 @@ private:
 
 	static void getAllGrobnerBasis(std::set<Polynom>& GrobnerBasis);
 
+	static bool reduceGrobnerBasisSimpleLM(const Polynom& firstPolynom, const Polynom& secondPolynom);
+
+	static bool reduceGrobnerBasisCommonIdeal(const Polynom& firstPolynom, const Polynom& secondPolynom, const std::set<Polynom>& GrobnerBasis);
+
 	bool isZero() const;
 public:
 	Polynom() = default;

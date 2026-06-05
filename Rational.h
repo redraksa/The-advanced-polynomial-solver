@@ -16,6 +16,7 @@ private:
 	static long long saveAdd(const long long first, const long long second);
 	static long long saveSub(const long long first, const long long second);
 	static long long saveDiv(const long long divisible, const long long divider);
+	static long long saveMul(const long long first, const long long second);
 
 	
 public:
@@ -29,10 +30,6 @@ public:
 	}
 
 	Rational(long long number) : numenator(number), denumenator(1) {}
-	
-	static long long saveMul(const long long first, const long long second);
-
-	static long long savePow(long long base, long long exp);
 
 	Rational& operator+=(const Rational& other);
 

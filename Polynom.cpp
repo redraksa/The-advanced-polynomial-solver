@@ -128,6 +128,19 @@ void Polynom::getAllGrobnerBasis(std::set<Polynom>& GrobnerBasis) {
 		while (!queueTasks.empty()) {
 			std::pair<const Polynom*, const Polynom*> curTask = queueTasks.front();
 			queueTasks.pop();
+
+			bool res = reduceGrobnerBasisSimpleLM(*curTask.first, *curTask.second);
+
+			if (res) {
+				continue;
+			}
+
+			res = reduceGrobnerBasisCommonIdeal(*curTask.first, *curTask.second, GrobnerBasis);
+
+			if (res) {
+				continue;
+			}
+
 			Polynom sPolynom = getSPolynom(*curTask.first, *curTask.second);
 			Polynom newElem = sPolynom.getNewBasisElem(GrobnerBasis);
 
@@ -143,6 +156,42 @@ void Polynom::getAllGrobnerBasis(std::set<Polynom>& GrobnerBasis) {
 			}
 		}
 	}
+}
+
+bool Polynom::reduceGrobnerBasisSimpleLM(const Polynom& firstPolynom, const Polynom& secondPolynom) {
+
+	Monomial GCDMonom = Monomial::GCD(firstPolynom.getLM(), secondPolynom.getLM());
+
+	if (GCDMonom.isFreeMonom()) {
+		return true;
+	}
+
+	return false;
+}
+
+bool Polynom::reduceGrobnerBasisCommonIdeal(const Polynom& firstPolynom, const Polynom& secondPolynom, const std::set<Polynom>& GrobnerBasis) {
+
+	Monomial currentLCM = Monomial::LCM(firstPolynom.getLM(), secondPolynom.getLM());
+
+
+	for (const auto& poly : GrobnerBasis) {
+
+
+		if (firstPolynom == poly || secondPolynom == poly) {
+			continue;
+		}
+
+		if (currentLCM.is_divisible_by(poly.getLM())) {
+			Monomial firstLCM = Monomial::LCM(firstPolynom.getLM(), poly.getLM()),
+				secondLCM = Monomial::LCM(secondPolynom.getLM(), poly.getLM());
+
+			if (currentLCM > firstLCM && currentLCM > secondLCM) {
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 bool Polynom::isZero() const {
